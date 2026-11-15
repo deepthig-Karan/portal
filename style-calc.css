@@ -1,0 +1,262 @@
+* {
+    box-sizing: border-box;
+    font-family: "Roboto", system-ui, -apple-system, "Segoe UI", Roboto;
+}
+
+body {
+    background-color: #f4f7f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px 0;
+}
+
+.main_logo {
+    width: auto;
+    max-width: 260px;
+    margin: 0 auto 20px auto;
+    text-align: center;
+}
+
+.logo-img {
+    max-width: 100%;
+    height: auto;
+}
+
+.calculator-container {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 520px;
+}
+
+
+
+h2 {
+    text-align: center; 
+    color: #233f93;
+    margin-top: 0;
+    font-family: "Roboto", sans-serif;
+    font-size: 22px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #444;
+}
+
+input, select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+#calculate-btn {
+    flex: 2;
+    padding: 12px;
+    background-color: #3b7a2e;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#calculate-btn:hover {
+    background-color: #218838;
+}
+
+#reset-btn {
+    flex: 1;
+    padding: 12px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#reset-btn:hover {
+    background-color: #5a6268;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#result-container {
+    margin-top: 25px;
+    padding: 18px;
+    background-color: #eef2f5;
+    border-radius: 6px;
+}
+
+.info-link-btn {
+    background: none;
+    border: none;
+    color: #0066cc;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 8px 0;
+    margin: 10px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.info-link-btn:hover {
+    color: #004080;
+    text-decoration: underline;
+}
+
+.mode-card {
+    background: #ffffff;
+    padding: 16px;
+    margin-top: 12px;
+    border-left: 5px solid #007bff;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.mode-card h4 {
+    margin: 0 0 8px 0;
+    color: #007bff;
+    font-size: 17px;
+}
+
+.mode-card p {
+    margin: 6px 0;
+    color: #333;
+}
+
+.not-available {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.mode-note {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    margin-top: 10px !important;
+    border-left: 4px solid #ffeeba;
+}
+
+.copy-section {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.copy-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #233f93;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.copy-btn:hover {
+    background-color: #3758ba;
+}
+
+.copy-feedback {
+    font-size: 13px;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.support-section {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid #d1d1d1;
+    text-align: center;
+}
+
+.whatsapp-btn {
+    display: inline-block;
+    background-color: #3b7a2e;
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 15px;
+    transition: background-color 0.2s;
+}
+
+.whatsapp-btn:hover {
+    background-color: #128C7E;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.55);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    background: #ffffff;
+    width: 90%;
+    max-width: 580px;
+    max-height: 82vh;
+    overflow-y: auto;
+    border-radius: 8px;
+    padding: 25px;
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    font-size: 26px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #888;
+}
+
+.badge-banned {
+    color: #dc3545;
+    font-weight: bold;
+}

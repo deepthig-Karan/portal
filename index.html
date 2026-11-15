@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShipEm Express Logistics - Booking Portal</title>
+  <link rel="icon" type="image/x-icon" href="/Logo/mainlogo.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <!-- JsBarcode for Consignment Barcode Generation -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+</head>
+<body>
+
+  <!-- Global Datalists for Commodity Codes and Item Names -->
+  <datalist id="commodity-codes-list"></datalist>
+  <datalist id="commodity-names-list"></datalist>
+
+  <!-- Top Navigation Header -->
+  <header id="top-nav" class="top-nav hidden">
+    <img class="nav-brand" src="Logo/el_logo.svg" alt="ShipEm EXpress Logistics logo">
+    <div class="nav-actions">
+      <span id="nav-branch-badge" class="badge"></span>
+      <button type="button" class="btn btn-outline-light btn-sm" onclick="navigateTo('dashboard-page')">Dashboard</button>
+      <button type="button" class="btn btn-danger btn-sm" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- 1. HOME PAGE -->
+  <section id="home-page" class="page active">
+    <div class="hero-card">
+      <img src="Logo/el_logo.svg" alt="ShipEm EXpress Logistics logo">
+      <h1>Welcome to Booking portal</h1>
+      <p class="subtitle">Fast, reliable international courier &amp; cargo management system.</p>
+      <div class="hero-buttons">
+        <button type="button" class="btn btn-primary btn-lg" onclick="navigateTo('login-page')">Login</button>
+        <a href="https://wa.me/918148655877?text=Hello%20ShipEm%20Support,%20I%20need%20assistance%20with%20the%20booking%20portal." target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp btn-lg">
+          Contact Support
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. LOGIN PAGE -->
+  <section id="login-page" class="page">
+    <div class="auth-card">
+      <img src="Logo/el_logo.svg" alt="ShipEm EXpress Logistics logo">
+      <h2>Branch Portal Login</h2>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-username">User name</label>
+          <input type="text" id="login-username" required autocomplete="username" placeholder="Enter user name" />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required autocomplete="current-password" placeholder="Enter password" />
+        </div>
+        <div id="login-error" class="error-msg hidden">User not available or invalid credentials.</div>
+        <div class="auth-actions">
+          <button type="submit" class="btn btn-primary btn-block" id="login-submit-btn">Login</button>
+          <button type="button" class="btn btn-secondary btn-block" onclick="navigateTo('home-page')">Back to Home</button>
+        </div>
+      </form>
+
+      <!-- Login Animation Overlay -->
+      <div id="login-loader" class="loader-overlay hidden">
+        <div class="spinner"></div>
+        <p>Authenticating branch credentials...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. BRANCH WELCOME / DASHBOARD PAGE -->
+  <section id="dashboard-page" class="page">
+    <div class="container">
+      <div class="welcome-banner">
+        <h2 id="welcome-branch-heading">Welcome Branch</h2>
+        <p id="branch-meta-info">Select an operation below to continue.</p>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dash-card">
+          <h3>New Shipment</h3>
+          <p>Create a new international consignment, calculate volumetric weights, and generate invoices.</p>
+          <button type="button" class="btn btn-primary" onclick="startNewBooking()">Create consignment</button>
+        </div>
+
+        <div class="dash-card">
+          <h3>View bookings</h3>
+          <p>Access past consignment records, search shipments, and reprint invoices or commodity lists.</p>
+          <button type="button" class="btn btn-secondary" onclick="openRecordsPage()">Open records</button>
+        </div>
+
+         <div class="dash-card">
+          <h3>Rate calculator</h3>
+          <p>Get instant price of the shipment to more than 200 countries according to the weight and preferred mode.</p>
+          <div class="rc-button"> <a href="calculator.html" target="_blank">Get quote</a></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. CREATE CONSIGNMENT PAGE -->
+  <section id="booking-page" class="page">
+    <div class="container">
+      <div class="page-header">
+        <h2>Create New Consignment</h2>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="navigateTo('dashboard-page')">← Back to Dashboard</button>
+      </div>
+
+      <form id="booking-form" novalidate>
+        <!-- SECTION A: SENDER DETAILS -->
+        <div class="form-section" id="sender-section">
+          <div class="section-header">
+            <h3>Sender Details</h3>
+            <span class="status-pill" id="sender-status">Editing</span>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Sender Full Name *</label>
+              <input type="text" id="sender-name" class="sender-input" required placeholder="Full Name" />
+            </div>
+            <div class="form-group">
+              <label>Post Code (India PIN Only) *</label>
+              <input type="text" id="sender-postcode" class="sender-input" maxlength="6" required placeholder="6-digit Indian PIN" />
+              <small id="sender-pin-msg" class="field-hint"></small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Address *</label>
+            <input type="text" id="sender-address" class="sender-input" required placeholder="Street, Area, Landmark" />
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>City *</label>
+              <input type="text" id="sender-city" class="sender-input" required placeholder="Auto-filled from PIN" />
+            </div>
+            <div class="form-group">
+              <label>Country *</label>
+              <input type="text" id="sender-country" class="sender-input" value="India" readonly />
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <div class="form-group">
+              <label>Contact Number *</label>
+              <div class="phone-group">
+                <input type="text" id="sender-phone-code" class="sender-input code-input" value="+91" readonly />
+                <input type="tel" id="sender-phone" class="sender-input" required placeholder="10-digit number" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Email ID *</label>
+              <input type="email" id="sender-email" class="sender-input" required placeholder="sender@example.com" />
+            </div>
+            <div class="form-group">
+              <label>Aadhaar Number *</label>
+              <input type="text" id="sender-aadhaar" class="sender-input" maxlength="12" required placeholder="12-digit Aadhaar" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
+            </div>
+          </div>
+
+          <div class="section-actions">
+            <button type="button" id="sender-save-btn" class="btn btn-success" disabled onclick="saveSection('sender')">Save details</button>
+            <button type="button" id="sender-edit-btn" class="btn btn-warning" disabled onclick="editSection('sender')">Edit details</button>
+            <button type="button" id="sender-reset-btn" class="btn btn-danger" onclick="resetSection('sender')">Reset</button>
+          </div>
+        </div>
+
+        <!-- SECTION B: RECEIVER DETAILS -->
+        <div class="form-section" id="receiver-section">
+          <div class="section-header">
+            <h3>Receiver Details</h3>
+            <span class="status-pill" id="receiver-status">Editing</span>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Receiver Full Name *</label>
+              <input type="text" id="receiver-name" class="receiver-input" required placeholder="Receiver Full Name" />
+            </div>
+            <div class="form-group">
+              <label>Country *</label>
+              <select id="receiver-country" class="receiver-input" required>
+                <option value="">-- Select Country --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Post Code *</label>
+              <input type="text" id="receiver-postcode" class="receiver-input" list="receiver-city-options" required placeholder="Enter Post / ZIP code" />
+              <datalist id="receiver-city-options"></datalist>
+              <small id="receiver-pin-msg" class="field-hint"></small>
+            </div>
+            <div class="form-group">
+              <label>City *</label>
+              <input type="text" id="receiver-city" class="receiver-input" required placeholder="City (auto-filled or select)" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Address *</label>
+            <input type="text" id="receiver-address" class="receiver-input" required placeholder="Street, Apartment, State/Province" />
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Contact Number *</label>
+              <div class="phone-group">
+                <input type="text" id="receiver-phone-code" class="receiver-input code-input" placeholder="+Code" readonly />
+                <input type="tel" id="receiver-phone" class="receiver-input" required placeholder="Numerical digits only" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Email ID *</label>
+              <input type="email" id="receiver-email" class="receiver-input" required placeholder="receiver@example.com" />
+            </div>
+          </div>
+
+          <div class="section-actions">
+            <button type="button" id="receiver-save-btn" class="btn btn-success" disabled onclick="saveSection('receiver')">Save details</button>
+            <button type="button" id="receiver-edit-btn" class="btn btn-warning" disabled onclick="editSection('receiver')">Edit details</button>
+            <button type="button" id="receiver-reset-btn" class="btn btn-danger" onclick="resetSection('receiver')">Reset</button>
+          </div>
+        </div>
+
+        <!-- SECTION C: CONSIGNMENT DETAILS -->
+        <div class="form-section" id="consignment-section">
+          <div class="section-header">
+            <h3>Consignment Details</h3>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Consignment Type *</label>
+              <select id="consignment-type" required>
+                <option value="Document">Document</option>
+                <option value="Non-Doc parcels">Non-Doc parcels</option>
+                <option value="Medicine">Medicine</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Package Count *</label>
+              <select id="package-count" required>
+                <option value="1">1</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="packages-container"></div>
+        </div>
+
+        <!-- SECTION D: CONSOLIDATED BOOKING DETAILS -->
+        <div class="form-section" id="booking-summary-section">
+          <div class="section-header">
+            <h3>Consolidated Booking Details</h3>
+          </div>
+
+          <div class="grid-3">
+            <div class="form-group">
+              <label>Total Chargeable Weight (kg)</label>
+              <input type="text" id="total-chargeable-weight" readonly value="0.5" />
+            </div>
+            <div class="form-group">
+              <label>Preferred Mode *</label>
+              <select id="preferred-mode" required>
+                <option value="">-- Select Country & Weight First --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Total Cost Including GST (₹)</label>
+              <input type="text" id="total-cost" readonly value="₹ 0.00" />
+            </div>
+          </div>
+
+          <div class="section-actions main-booking-actions" id="pre-confirm-actions">
+            <button type="button" class="btn btn-primary btn-lg" onclick="handleConfirmBooking()">Confirm booking</button>
+            <button type="button" class="btn btn-danger btn-lg" onclick="handleCancelBooking()">Cancel booking</button>
+          </div>
+
+          <!-- Post-Confirmation Banner & Output Buttons -->
+          <div id="booking-success-panel" class="success-panel hidden">
+            <div class="success-alert">
+              <h4>Congratulations, the shipment has been booked successfully!</h4>
+              <p>Consignment Number: <strong id="booked-consignment-no"></strong></p>
+            </div>
+
+            <div class="post-booking-buttons">
+              <button type="button" class="btn btn-dark" onclick="openPreviewModal('invoice')">Preview invoice</button>
+              <button type="button" class="btn btn-dark" onclick="openPreviewModal('commodity')">Preview commodity</button>
+              <button type="button" class="btn btn-dark" onclick="openPreviewModal('export-commodity')">Export commodity</button>
+              <button type="button" class="btn btn-dark" onclick="openPreviewModal('customer-declaration')">Customer declaration</button>
+              <button type="button" class="btn btn-dark" onclick="openPreviewModal('consignment')">Print consignment</button>
+              <button type="button" class="btn btn-whatsapp" onclick="copyBookingDetails()">Copy booking details</button>
+            </div>
+
+            <div class="new-booking-bar">
+              <button type="button" class="btn btn-primary" onclick="startNewBooking()">+ New booking</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- 5. VIEW BOOKING RECORDS PAGE -->
+  <section id="records-page" class="page">
+    <div class="container">
+      <div class="page-header">
+        <h2>Branch Booking Records</h2>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="navigateTo('dashboard-page')">← Back to Dashboard</button>
+      </div>
+
+      <div class="search-bar-box">
+        <input type="text" id="records-search" placeholder="Search by Consignment ID, Sender Name, or Receiver Name..." oninput="renderRecordsTable()" />
+      </div>
+
+      <div class="table-responsive">
+        <table class="records-table">
+          <thead>
+            <tr>
+              <th>Consignment No</th>
+              <th>Booking Branch</th>
+              <th>Sender Name</th>
+              <th>Sender City</th>
+              <th>Receiver Name</th>
+              <th>Receiver Country</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="records-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKING IN PROGRESS OVERLAY -->
+  <div id="booking-progress-overlay" class="loader-overlay fixed-overlay hidden">
+    <div class="spinner"></div>
+    <h3>Booking in progress...</h3>
+    <p>Generating consignment number and saving to ShipEm database.</p>
+  </div>
+
+  <!-- MODAL FOR PREVIEWS -->
+  <div id="preview-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-toolbar">
+        <button type="button" class="btn btn-primary" onclick="downloadModalPDF()">Download / Print PDF</button>
+        <button type="button" class="btn btn-danger" onclick="closePreviewModal()">Close</button>
+      </div>
+      <div id="pdf-printable-area" class="printable-sheet"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
